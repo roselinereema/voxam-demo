@@ -1,0 +1,298 @@
+
+.staff-register-page {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fb;
+  font-family: Arial, sans-serif;
+}
+
+/* LEFT SIDE */
+
+.staff-register-left {
+  width: 42%;
+  background: linear-gradient(135deg, #172554, #2563eb);
+  color: white;
+  padding: 55px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.staff-register-left h1 {
+  font-size: 27px;
+  margin: 0;
+}
+
+.staff-register-intro {
+  max-width: 450px;
+  margin: auto 0;
+}
+
+.staff-register-intro h2 {
+  font-size: 43px;
+  line-height: 1.2;
+  margin-bottom: 22px;
+}
+
+.staff-register-intro p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #dbeafe;
+}
+
+/* RIGHT SIDE */
+
+.staff-register-right {
+  width: 58%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 35px 20px;
+  box-sizing: border-box;
+}
+
+.staff-register-card {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 38px;
+  border-radius: 15px;
+  box-shadow: 0 8px 35px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+/* HEADER */
+
+.staff-register-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.staff-register-header h2 {
+  font-size: 27px;
+  color: #172554;
+  margin: 0 0 8px;
+}
+
+.staff-register-header p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* PROGRESS */
+
+.staff-register-progress {
+  margin-bottom: 30px;
+}
+
+.staff-progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.staff-progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  color: #94a3b8;
+}
+
+.staff-progress-step span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.staff-progress-step.active span {
+  background: #2563eb;
+  color: white;
+}
+
+.staff-progress-step.active {
+  color: #2563eb;
+}
+
+.staff-progress-step p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.staff-progress-line {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 12px 20px;
+}
+
+.staff-progress-track {
+  height: 5px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+.staff-progress-fill {
+  height: 100%;
+  width: 50%;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+
+.staff-progress-fill.completed {
+  width: 100%;
+}
+
+/* FORM */
+
+.staff-form-group {
+  margin-bottom: 20px;
+}
+
+.staff-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.staff-form-group input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.staff-form-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* PASSWORD */
+
+.staff-show-password {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+  margin: 5px 0 20px;
+  cursor: pointer;
+}
+
+.staff-show-password input {
+  width: auto;
+  margin: 0;
+}
+
+/* BUTTONS */
+
+.staff-register-button {
+  width: 100%;
+  padding: 14px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.staff-register-button:hover {
+  background: #1d4ed8;
+}
+
+.staff-register-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.staff-back-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.staff-back-button:hover {
+  background: #f1f5f9;
+}
+
+/* FOOTER */
+
+.staff-register-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 25px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.staff-register-footer button {
+  border: none;
+  background: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.staff-back-home {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.staff-back-home button {
+  border: none;
+  background: none;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.staff-back-home button:hover {
+  color: #2563eb;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+  .staff-register-left {
+    display: none;
+  }
+
+  .staff-register-right {
+    width: 100%;
+  }
+}
+
+@media (max-width: 500px) {
+  .staff-register-card {
+    padding: 25px 20px;
+  }
+
+  .staff-register-header h2 {
+    font-size: 23px;
+  }
+}
