@@ -17,7 +17,6 @@ import Landing from "./pages/Landing/Landing";
 // ==============================
 
 import Login from "./pages/Auth/Login";
-
 import StudentRegister from "./pages/Auth/StudentRegister/StudentRegister";
 import StaffRegister from "./pages/Auth/StaffRegister/StaffRegister";
 
@@ -43,59 +42,45 @@ import AvailableExams from "./pages/Student/AvailableExams/AvailableExams";
 import MyExams from "./pages/Student/MyExams/MyExams";
 import StudentProfile from "./pages/Student/Profile/Profile";
 import StudentSettings from "./pages/Student/Settings/Settings";
-
+import TakeExam from "./pages/Student/TakeExam/TakeExam";
 
 function App() {
-
   return (
-
     <BrowserRouter>
-
       <Routes>
 
-        {/* ==============================
-            DEFAULT
-        ============================== */}
+        {/* DEFAULT */}
 
         <Route
           path="/"
           element={<Navigate to="/landing" replace />}
         />
 
-        {/* ==============================
-            LANDING
-        ============================== */}
+        {/* LANDING */}
 
         <Route
           path="/landing"
           element={<Landing />}
         />
 
-        {/* ==============================
-            LOGIN
-        ============================== */}
+        {/* AUTHENTICATION */}
 
         <Route
           path="/login"
           element={<Login />}
         />
 
-        {/* ==============================
-            STUDENT REGISTRATION
-        ============================== */}
-
         <Route
           path="/student/register"
           element={<StudentRegister />}
         />
-        <Route
-  path="/staff/register"
-  element={<StaffRegister />}
-/>
 
-        {/* ==============================
-            STAFF ROUTES
-        ============================== */}
+        <Route
+          path="/staff/register"
+          element={<StaffRegister />}
+        />
+
+        {/* STAFF ROUTES */}
 
         <Route
           path="/staff/dashboard"
@@ -137,54 +122,49 @@ function App() {
           element={<Settings />}
         />
 
-        {/* ==============================
-            STUDENT DASHBOARD
-        ============================== */}
+        {/* STUDENT DASHBOARD */}
 
         <Route
           path="/student/dashboard"
           element={<StudentDashboard />}
         />
 
-        {/* ==============================
-            AVAILABLE EXAMS
-        ============================== */}
+        {/* AVAILABLE EXAMS */}
 
         <Route
           path="/student/exams"
           element={<AvailableExams />}
         />
 
-        {/* ==============================
-            MY EXAMINATIONS
-        ============================== */}
+        {/* MY EXAMINATIONS */}
 
         <Route
           path="/student/my-exams"
           element={<MyExams />}
         />
 
-        {/* ==============================
-            STUDENT PROFILE
-        ============================== */}
+        {/* TAKE EXAMINATION */}
+
+        <Route
+          path="/student/take-exam/:attemptId"
+          element={<TakeExam />}
+        />
+
+        {/* STUDENT PROFILE */}
 
         <Route
           path="/student/profile"
           element={<StudentProfile />}
         />
 
-        {/* ==============================
-            STUDENT SETTINGS
-        ============================== */}
+        {/* STUDENT SETTINGS */}
 
         <Route
           path="/student/settings"
           element={<StudentSettings />}
         />
 
-        {/* ==============================
-            UNKNOWN URL
-        ============================== */}
+        {/* UNKNOWN URL */}
 
         <Route
           path="*"
@@ -192,11 +172,8 @@ function App() {
         />
 
       </Routes>
-
     </BrowserRouter>
-
   );
-
 }
 
 export default App;

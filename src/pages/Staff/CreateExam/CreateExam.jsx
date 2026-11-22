@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../../components/Layout/Layout";
+import { supabase } from "../../../lib/supabase";
 import "./CreateExam.css";
 
 function CreateExam() {
-
   const navigate = useNavigate();
 
   const [examData, setExamData] = useState({
@@ -15,92 +16,142 @@ function CreateExam() {
     totalMarks: "",
     numberOfQuestions: "",
     answerMode: "voice-text",
+    allowedAttempts: "1",
     instructions: ""
   });
 
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
 
-    setExamData({
-      ...examData,
+    setExamData((previousData) => ({
+      ...previousData,
       [name]: value
-    });
-
+    }));
   };
 
+  const saveExam = async (e, continueToQuestions = false) => {
+    if (e) {
+      e.preventDefault();
+    }
+
+    if (loading) return;
+
+    // Validate required fields for both buttons.
+    const form = document.querySelector(".create-exam-form");
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Get the currently logged-in staff member.
+      const {
+        data: { user },
+        error: userError
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+
+      if (!user) {
+        throw new Error("Please log in again.");
+      }
+
+      // Get the staff member's profile.
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      if (!profile) {
+        throw new Error("Staff profile not found.");
+      }
+
+      // Prepare examination details for Supabase.
+      const examToSave = {
+        exam_title: examData.examName.trim(),
+        subject: examData.subject.trim(),
+        description: examData.description.trim() || null,
+        duration_minutes: Number(examData.duration),
+        total_marks: Number(examData.totalMarks),
+        total_questions: Number(examData.numberOfQuestions),
+        answer_mode: examData.answerMode,
+        allowed_attempts: Number(examData.allowedAttempts),
+        instructions: examData.instructions.trim() || null,
+        status: "draft",
+        created_by: user.id,
+        staff_name: profile.full_name || "Staff User"
+      };
+
+      // Insert the examination into Supabase.
+      const { data: newExam, error: insertError } = await supabase
+        .from("exams")
+        .insert([examToSave])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      alert(
+        continueToQuestions
+          ? "Examination created successfully!"
+          : "Examination saved as draft."
+      );
+
+      if (continueToQuestions) {
+        navigate("/staff/upload-question", {
+          state: { examId: newExam.id }
+        });
+      }
+    } catch (error) {
+      console.error("Exam saving error:", error);
+      alert(error.message || "Unable to save the examination.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = (e) => {
-
-    e.preventDefault();
-
-    console.log("Exam Data:", examData);
-
-    alert("Exam created successfully!");
-
-    navigate("/staff/dashboard");
-
+    saveExam(e, true);
   };
-
 
   const handleSaveDraft = () => {
-
-    console.log("Draft Saved:", examData);
-
-    alert("Exam saved as draft.");
-
+    saveExam(null, false);
   };
 
-
   return (
-
     <Layout>
-
       <div className="create-exam-page">
 
         {/* PAGE HEADER */}
-
         <div className="page-header">
-
           <div>
-
-            <h2>
-              Create New Examination
-            </h2>
-
+            <h2>Create New Examination</h2>
             <p>
               Create and configure an examination for students.
             </p>
-
           </div>
-
         </div>
-
 
         <form
           className="create-exam-form"
           onSubmit={handleSubmit}
         >
 
-
           {/* BASIC DETAILS */}
-
           <div className="form-section">
-
-            <h3>
-              Basic Examination Details
-            </h3>
-
+            <h3>Basic Examination Details</h3>
 
             <div className="form-grid">
-
               <div className="form-group">
-
-                <label>
-                  Exam Name
-                </label>
-
+                <label>Exam Name</label>
                 <input
                   type="text"
                   name="examName"
@@ -109,16 +160,10 @@ function CreateExam() {
                   placeholder="Example: Data Structures - Internal Exam"
                   required
                 />
-
               </div>
 
-
               <div className="form-group">
-
-                <label>
-                  Subject
-                </label>
-
+                <label>Subject</label>
                 <input
                   type="text"
                   name="subject"
@@ -127,18 +172,11 @@ function CreateExam() {
                   placeholder="Example: Data Structures"
                   required
                 />
-
               </div>
-
             </div>
 
-
             <div className="form-group">
-
-              <label>
-                Description
-              </label>
-
+              <label>Description</label>
               <textarea
                 name="description"
                 value={examData.description}
@@ -146,29 +184,16 @@ function CreateExam() {
                 placeholder="Enter a short description about the examination..."
                 rows="4"
               />
-
             </div>
-
           </div>
 
-
           {/* EXAMINATION CONFIGURATION */}
-
           <div className="form-section">
-
-            <h3>
-              Examination Configuration
-            </h3>
-
+            <h3>Examination Configuration</h3>
 
             <div className="form-grid">
-
               <div className="form-group">
-
-                <label>
-                  Duration (minutes)
-                </label>
-
+                <label>Duration (minutes)</label>
                 <input
                   type="number"
                   name="duration"
@@ -178,16 +203,10 @@ function CreateExam() {
                   min="1"
                   required
                 />
-
               </div>
 
-
               <div className="form-group">
-
-                <label>
-                  Total Marks
-                </label>
-
+                <label>Total Marks</label>
                 <input
                   type="number"
                   name="totalMarks"
@@ -197,16 +216,10 @@ function CreateExam() {
                   min="1"
                   required
                 />
-
               </div>
 
-
               <div className="form-group">
-
-                <label>
-                  Number of Questions
-                </label>
-
+                <label>Number of Questions</label>
                 <input
                   type="number"
                   name="numberOfQuestions"
@@ -216,33 +229,34 @@ function CreateExam() {
                   min="1"
                   required
                 />
-
               </div>
 
+              <div className="form-group">
+                <label>Allowed Attempts</label>
+                <input
+                  type="number"
+                  name="allowedAttempts"
+                  value={examData.allowedAttempts}
+                  onChange={handleChange}
+                  placeholder="Example: 1"
+                  min="1"
+                  required
+                />
+              </div>
             </div>
-
           </div>
 
-
           {/* ANSWER MODE */}
-
           <div className="form-section">
-
-            <h3>
-              Answer Mode
-            </h3>
+            <h3>Answer Mode</h3>
 
             <p className="section-description">
               Select how students can answer questions during the examination.
             </p>
 
-
             <div className="answer-options">
 
-              {/* TEXT */}
-
               <label className="answer-option">
-
                 <input
                   type="radio"
                   name="answerMode"
@@ -252,24 +266,12 @@ function CreateExam() {
                 />
 
                 <div>
-
-                  <strong>
-                    Text Answer
-                  </strong>
-
-                  <span>
-                    Students type their answers.
-                  </span>
-
+                  <strong>Text Answer</strong>
+                  <span>Students type their answers.</span>
                 </div>
-
               </label>
 
-
-              {/* VOICE */}
-
               <label className="answer-option">
-
                 <input
                   type="radio"
                   name="answerMode"
@@ -279,24 +281,12 @@ function CreateExam() {
                 />
 
                 <div>
-
-                  <strong>
-                    Voice Answer
-                  </strong>
-
-                  <span>
-                    Students answer using their voice.
-                  </span>
-
+                  <strong>Voice Answer</strong>
+                  <span>Students answer using their voice.</span>
                 </div>
-
               </label>
 
-
-              {/* VOICE + TEXT */}
-
               <label className="answer-option selected">
-
                 <input
                   type="radio"
                   name="answerMode"
@@ -306,31 +296,19 @@ function CreateExam() {
                 />
 
                 <div>
-
-                  <strong>
-                    Voice + Text
-                  </strong>
-
+                  <strong>Voice + Text</strong>
                   <span>
                     Students can answer by voice and edit the converted text.
                   </span>
-
                 </div>
-
               </label>
 
             </div>
-
           </div>
 
-
           {/* INSTRUCTIONS */}
-
           <div className="form-section">
-
-            <h3>
-              Examination Instructions
-            </h3>
+            <h3>Examination Instructions</h3>
 
             <textarea
               name="instructions"
@@ -339,185 +317,103 @@ function CreateExam() {
               placeholder="Enter instructions that students should read before starting the examination..."
               rows="6"
             />
-
           </div>
 
-
           {/* VOICE FEATURES */}
-
           <div className="form-section">
-
-            <h3>
-              Examination Features
-            </h3>
-
+            <h3>Examination Features</h3>
 
             <div className="feature-list">
 
-
               <div className="feature-item">
-
-                <span>
-                  🔊
-                </span>
-
+                <span>🔊</span>
                 <div>
-
-                  <strong>
-                    Question Read Aloud
-                  </strong>
-
+                  <strong>Question Read Aloud</strong>
                   <p>
                     Questions can be read to students using Text-to-Speech.
                   </p>
-
                 </div>
-
               </div>
 
-
               <div className="feature-item">
-
-                <span>
-                  🎤
-                </span>
-
+                <span>🎤</span>
                 <div>
-
-                  <strong>
-                    Speech-to-Text
-                  </strong>
-
+                  <strong>Speech-to-Text</strong>
                   <p>
                     Student voice responses are converted into text.
                   </p>
-
                 </div>
-
               </div>
 
-
               <div className="feature-item">
-
-                <span>
-                  ✏️
-                </span>
-
+                <span>✏️</span>
                 <div>
-
-                  <strong>
-                    Voice-Based Answer Editing
-                  </strong>
-
+                  <strong>Voice-Based Answer Editing</strong>
                   <p>
                     Students can edit their converted answers using voice commands.
                   </p>
-
                 </div>
-
               </div>
 
-
               <div className="feature-item">
-
-                <span>
-                  💾
-                </span>
-
+                <span>💾</span>
                 <div>
-
-                  <strong>
-                    Automatic Answer Saving
-                  </strong>
-
+                  <strong>Automatic Answer Saving</strong>
                   <p>
                     Student answers are automatically saved during the examination.
                   </p>
-
                 </div>
-
               </div>
 
-
               <div className="feature-item">
-
-                <span>
-                  📄
-                </span>
-
+                <span>📄</span>
                 <div>
-
-                  <strong>
-                    Answer Paper Generation
-                  </strong>
-
+                  <strong>Answer Paper Generation</strong>
                   <p>
                     The student's final answers are compiled into an answer paper for staff review.
                   </p>
-
                 </div>
-
               </div>
 
-
               <div className="feature-item">
-
-                <span>
-                  👨‍🏫
-                </span>
-
+                <span>👨‍🏫</span>
                 <div>
-
-                  <strong>
-                    Staff Review
-                  </strong>
-
+                  <strong>Staff Review</strong>
                   <p>
                     Staff can review submitted answers and manually assign marks and feedback.
                   </p>
-
                 </div>
-
               </div>
 
-
             </div>
-
           </div>
 
-
           {/* ACTIONS */}
-
           <div className="form-actions">
 
             <button
               type="button"
               className="draft-button"
               onClick={handleSaveDraft}
+              disabled={loading}
             >
-              Save as Draft
+              {loading ? "Saving..." : "Save as Draft"}
             </button>
-
 
             <button
               type="submit"
               className="create-button"
+              disabled={loading}
             >
-              Create Examination
+              {loading ? "Creating..." : "Create Examination"}
             </button>
 
           </div>
 
-
         </form>
-
       </div>
-
     </Layout>
-
   );
-
 }
-
 
 export default CreateExam;
